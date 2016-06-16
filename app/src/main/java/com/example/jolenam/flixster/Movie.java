@@ -2,9 +2,6 @@ package com.example.jolenam.flixster;
 
 import java.util.ArrayList;
 
-/**
- * Created by jolenam on 6/15/16.
- */
 public class Movie {
     public String title;
     public String posterUrl;
