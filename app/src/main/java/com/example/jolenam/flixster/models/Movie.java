@@ -13,6 +13,8 @@ public class Movie {
     String backdropPath;
     String originalTitle;
     String overview;
+    Double score;
+    String releaseDate;
 
     public String getOverview() {
         return overview;
@@ -30,11 +32,28 @@ public class Movie {
         return String.format("https://image.tmdb.org/t/p/w780/%s", backdropPath);
     }
 
+    public String getScore() {
+        return score + " / 10";
+    }
+
+    public String getRating() { return "" + score; }
+
+    public String getReleaseDate() {
+        return "Release Date: " + releaseDate;
+    }
+
+    public boolean isPopular() {
+        return score > 5.0;
+    }
+
+
     public Movie(JSONObject jsonObject) throws JSONException {
         this.posterPath = jsonObject.getString("poster_path");
         this.originalTitle = jsonObject.getString("original_title");
         this.overview = jsonObject.getString("overview");
         this.backdropPath = jsonObject.getString("backdrop_path");
+        this.score = jsonObject.getDouble("vote_average");
+        this.releaseDate = jsonObject.getString("release_date");
     }
 
     // accept list of JSON movies; convert each element

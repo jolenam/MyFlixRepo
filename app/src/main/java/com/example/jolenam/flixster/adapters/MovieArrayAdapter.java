@@ -15,7 +15,31 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
 public class MovieArrayAdapter extends ArrayAdapter<Movie> {
+
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    public int getItemViewType(int position) {
+        Movie movie = getItem(position);
+        if (movie.isPopular()) { return 0; }
+        else { return 1; }
+    }
+
+
+    public static class ViewHolder {
+        ImageView ivPoster;
+        TextView tvTitle;
+        TextView tvOverview;
+        TextView tvScore;
+    }
+
+    public static class ViewHolderPop {
+        ImageView ivPopPoster;
+    }
 
     public MovieArrayAdapter(Context context, List<Movie> movies) {
         super(context, android.R.layout.simple_list_item_1, movies);
@@ -25,35 +49,78 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
     public View getView(int position, View convertView, ViewGroup parent) {
         //get the data item for position
         Movie movie = getItem(position);
+        int viewType = this.getItemViewType(position);
 
-        //check existing view being reused
-        if (convertView == null) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.item_movie, parent, false);
+        if (viewType == 1) {
+
+            //check existing view being reused
+            ViewHolder viewHolder;
+            if (convertView == null) {
+
+
+                viewHolder = new ViewHolder();
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(R.layout.item_movie, parent, false);
+
+                ImageView ivPoster = (ImageView) convertView.findViewById(R.id.ivPoster);
+                TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+                TextView tvOverview = (TextView) convertView.findViewById(R.id.tvOverview);
+                TextView tvScore = (TextView) convertView.findViewById(R.id.tvScore);
+
+                viewHolder.ivPoster = ivPoster;
+                viewHolder.tvTitle = tvTitle;
+                viewHolder.tvOverview = tvOverview;
+                viewHolder.tvScore = tvScore;
+
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            viewHolder.ivPoster.setImageResource(0);
+            viewHolder.tvTitle.setText(movie.getOriginalTitle());
+            viewHolder.tvOverview.setText(movie.getOverview());
+            viewHolder.tvScore.setText(movie.getScore());
+
+            boolean isLandscape = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
+            if (isLandscape) {
+                Picasso.with(getContext()).load(movie.getBackdropPath()).transform(new RoundedCornersTransformation(5, 5)).placeholder(R.drawable.placeholder_image).into(viewHolder.ivPoster);
+            } else {
+                Picasso.with(getContext()).load(movie.getPosterPath()).transform(new RoundedCornersTransformation(5, 5)).placeholder(R.drawable.placeholder_image).into(viewHolder.ivPoster);
+            }
+            // return the view that just got populated
+            return convertView;
         }
 
-        // find image view
-        ImageView ivPoster = (ImageView) convertView.findViewById(R.id.ivPoster);
-        // clear out image from convertView (in case being reused)
-        ivPoster.setImageResource(0);
+        else {
+            //check existing view being reused
+            ViewHolderPop viewHolderPop;
 
-        TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-        TextView tvOverview = (TextView) convertView.findViewById(R.id.tvOverview);
+            if (convertView == null) {
+                viewHolderPop = new ViewHolderPop();
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(R.layout.item_movie_popular, parent, false);
 
-        // populate data
-        tvTitle.setText(movie.getOriginalTitle());
-        tvOverview.setText(movie.getOverview());
+                ImageView ivPopPoster = (ImageView) convertView.findViewById(R.id.ivPopPoster);
 
 
-        boolean isLandscape = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+                viewHolderPop.ivPopPoster = ivPopPoster;
 
-        if (isLandscape) {
-            Picasso.with(getContext()).load(movie.getBackdropPath()).into(ivPoster);
-        } else {
-            Picasso.with(getContext()).load(movie.getPosterPath()).into(ivPoster);
+
+                convertView.setTag(viewHolderPop);
+            } else {
+                viewHolderPop = (ViewHolderPop) convertView.getTag();
+            }
+
+            Picasso.with(getContext()).load(movie.getBackdropPath()).transform(new RoundedCornersTransformation(5, 5)).into(viewHolderPop.ivPopPoster);
+
+            // return the view that just got populated
+            return convertView;
         }
 
-        // return the view that just got populated
-        return convertView;
     }
+
+
+
 }
