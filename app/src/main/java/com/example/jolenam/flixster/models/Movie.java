@@ -36,7 +36,7 @@ public class Movie {
         return score + " / 10";
     }
 
-    public String getRating() { return "" + score; }
+    public String getRating() { return "" + ((score / 2) % 10); }
 
     public String getReleaseDate() {
         return "Release Date: " + releaseDate;

@@ -7,10 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.jolenam.flixster.R;
 import com.example.jolenam.flixster.models.Movie;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class MovieArrayAdapter extends ArrayAdapter<Movie> {
+
 
     public int getViewTypeCount() {
         return 2;
@@ -57,7 +60,6 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
             ViewHolder viewHolder;
             if (convertView == null) {
 
-
                 viewHolder = new ViewHolder();
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 convertView = inflater.inflate(R.layout.item_movie, parent, false);
@@ -82,12 +84,40 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
             viewHolder.tvOverview.setText(movie.getOverview());
             viewHolder.tvScore.setText(movie.getScore());
 
+            ProgressBar progressBar = null;
+            if (convertView != null) {
+                progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
             boolean isLandscape = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
             if (isLandscape) {
-                Picasso.with(getContext()).load(movie.getBackdropPath()).transform(new RoundedCornersTransformation(5, 5)).placeholder(R.drawable.placeholder_image).into(viewHolder.ivPoster);
+                Picasso.with(getContext())
+                        .load(movie.getBackdropPath())
+                        .transform(new RoundedCornersTransformation(5, 5))
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(viewHolder.ivPoster,  new ImageLoadedCallback(progressBar) {
+                            @Override
+                            public void onSuccess() {
+                                if (this.progressBar != null) {
+                                    this.progressBar.setVisibility(View.GONE);
+                                }
+                            }
+                        });
             } else {
-                Picasso.with(getContext()).load(movie.getPosterPath()).transform(new RoundedCornersTransformation(5, 5)).placeholder(R.drawable.placeholder_image).into(viewHolder.ivPoster);
+                Picasso.with(getContext())
+                        .load(movie.getPosterPath())
+                        .transform(new RoundedCornersTransformation(5, 5))
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(viewHolder.ivPoster,  new ImageLoadedCallback(progressBar) {
+                            @Override
+                            public void onSuccess() {
+                                if (this.progressBar != null) {
+                                    this.progressBar.setVisibility(View.GONE);
+                                }
+                            }
+                        });
             }
             // return the view that just got populated
             return convertView;
@@ -113,7 +143,10 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
                 viewHolderPop = (ViewHolderPop) convertView.getTag();
             }
 
-            Picasso.with(getContext()).load(movie.getBackdropPath()).transform(new RoundedCornersTransformation(5, 5)).into(viewHolderPop.ivPopPoster);
+            Picasso.with(getContext())
+                    .load(movie.getBackdropPath())
+                    .transform(new RoundedCornersTransformation(5, 5))
+                    .into(viewHolderPop.ivPopPoster);
 
             // return the view that just got populated
             return convertView;
@@ -121,6 +154,23 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
     }
 
+    private class ImageLoadedCallback implements Callback {
+        ProgressBar progressBar;
+
+        public  ImageLoadedCallback(ProgressBar progBar){
+            progressBar = progBar;
+        }
+
+        @Override
+        public void onSuccess() {
+
+        }
+
+        @Override
+        public void onError() {
+
+        }
+    }
 
 
 }

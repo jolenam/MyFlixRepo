@@ -1,13 +1,17 @@
 package com.example.jolenam.flixster;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.jolenam.flixster.adapters.MovieArrayAdapter;
 import com.example.jolenam.flixster.models.Movie;
@@ -27,6 +31,8 @@ public class MoviesActivity extends AppCompatActivity {
     ArrayList<Movie> movies;
     MovieArrayAdapter movieAdapter;
     ListView lvItems;
+    TextView tvAppTitle;
+    ImageView ivBarIcon;
     private SwipeRefreshLayout swipeContainer;
 
     @Override
@@ -34,6 +40,17 @@ public class MoviesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
         fetchAsync(0);
+
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
+
+        tvAppTitle = (TextView) findViewById(R.id.tvAppTitle);
+        Typeface custom_font = Typeface.createFromAsset(this.getAssets(), "Belgrad.ttf");
+        tvAppTitle.setTypeface(custom_font);
+
+        //ivBarIcon = (ImageView) findViewById(R.id.ivBarIcon);
+
 
         // find swipe container
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);

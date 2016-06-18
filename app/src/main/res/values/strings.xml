@@ -2,4 +2,6 @@
     <string name="app_name">Flixster</string>
     <string name="submit">Submit</string>
     <string name="zero">0.0</string>
+    <string name="Flixster" />
+    <string name="flixster">FLIXSTER</string>
 </resources>

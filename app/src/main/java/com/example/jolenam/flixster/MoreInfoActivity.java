@@ -41,8 +41,7 @@ public class MoreInfoActivity extends AppCompatActivity {
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
         String rating = getIntent().getStringExtra("rating");
 
-        //ratingBar.setRating(Float.parseFloat(rating));
-        ratingBar.setRating(4.0f);
+        ratingBar.setRating(Float.parseFloat(rating));
     }
 
 }
